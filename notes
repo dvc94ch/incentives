@@ -1,0 +1,26 @@
+
+
+Essential Properties of p2p Networks
+============================
+
+Breakdown of cooperation in P2P networks is a problem, for which any solution
+have to overcome unique challenges.
+In this environment, a Tit-for-Tat solution isn't stable.
+
+Unique challenges
+------------
+
+- Large populations and high turnover
+
+- Asymmetric interest
+
+- Zero-cost identities
+
+Proposed solutions
+------------
+
+- Discriminating server selection
+
+-
+
+- Zero-cost identities
