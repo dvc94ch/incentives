@@ -3,11 +3,11 @@ use arr_macro::arr;
 const PEERS: usize = 20;
 const ROUNDS: u64 = 20;
 
-#[derive(Clone, Copy, Debug)]
-enum Request {
-    Dispatched,
-    None,
-}
+// #[derive(Clone, Copy, Debug)]
+// enum Request {
+//     Dispatched,
+//     None,
+// }
 
 #[derive(Clone, Copy, Debug)]
 enum Interaction {
@@ -25,21 +25,22 @@ enum Status {
 
 // The outer vector tracks the destination of the requests, the inner the source
 // type Requests = [[Request; PEERS]; PEERS];
-type History = Vec<[Interaction; PEERS]>;
+type History = Vec<Vec<Interaction>>;
 // type Acquaintances = Vec<&'static Peer<'a>>;
 
 #[derive(Clone)]
-struct Strategy {
-    decide: fn(&Peer, &Peer, &History) -> Interaction,
-    stranger: fn(&Peer, &Peer, &History) -> Interaction,
-    server: fn(&'static [Peer], &History) -> &'static Peer<'static>,
+struct Strategy<'a,'b> {
+    decide: fn(&Peer, &History) -> Interaction,
+    stranger: fn(&Peer, &History) -> Interaction,
+    // TODO
+    server:  <'a,'b> fn(&[Peer], &History) -> &'a Peer<'a,'b>,
 }
 
 #[derive(Clone)]
-struct Peer<'a> {
-    strat: Strategy,
-    acq: Vec<&'static Peer<'static>>,
-    req: &'a [Request; PEERS],
+struct Peer<'a,'b> {
+    strat: Strategy<'a,'b>,
+    acq: Vec<&'a Peer<'a,'b>>,
+    req: Vec<&'a Peer<'a,'b>>,
     status: Status,
     private: Vec<Interaction>,
 }
@@ -52,7 +53,7 @@ fn defect(_me: &Peer, _other: &Peer, _hist: &History) -> Interaction {
     Interaction::Defect
 }
 
-fn server(peers: &'static [Peer], _hist: &History) -> &'static Peer<'static> {
+fn server<'a,'b>(peers: &'a [Peer], _hist: &History) -> &'b Peer<'b> {
     &peers[0]
 }
 
@@ -61,7 +62,7 @@ fn stranger(_me: &Peer, _other: &Peer, _hist: &History) -> Interaction {
 }
 
 fn main() {
-    let mut requests = [[Request::None; PEERS]; PEERS];
+    let mut requests: Vec<Vec<&Peer>> = vec![];
     // Integer in arr![;_] should match the number PEERS
-    let mut peers = arr![Peer { strat: Strategy { decide: coop, stranger: coop, server }, acq: vec![], req: &requests[0], status: Status::Offline, private: vec![]}; 20];
+    let mut peers = vec![];
 }
