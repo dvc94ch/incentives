@@ -29,18 +29,18 @@ type History = Vec<Vec<Interaction>>;
 // type Acquaintances = Vec<&'static Peer<'a>>;
 
 #[derive(Clone)]
-struct Strategy<'a,'b> {
+struct Strategy<'a> {
     decide: fn(&Peer, &History) -> Interaction,
     stranger: fn(&Peer, &History) -> Interaction,
     // TODO
-    server:  <'a,'b> fn(&[Peer], &History) -> &'a Peer<'a,'b>,
+    server:  fn(&'a [Peer], &History) -> &'a Peer<'a>,
 }
 
 #[derive(Clone)]
-struct Peer<'a,'b> {
-    strat: Strategy<'a,'b>,
-    acq: Vec<&'a Peer<'a,'b>>,
-    req: Vec<&'a Peer<'a,'b>>,
+struct Peer<'a> {
+    strat: Strategy<'a>,
+    acq: Vec<&'a Peer<'a>>,
+    req: Vec<&'a Peer<'a>>,
     status: Status,
     private: Vec<Interaction>,
 }
@@ -53,7 +53,7 @@ fn defect(_me: &Peer, _other: &Peer, _hist: &History) -> Interaction {
     Interaction::Defect
 }
 
-fn server<'a,'b>(peers: &'a [Peer], _hist: &History) -> &'b Peer<'b> {
+fn server<'a>(peers: &'a [Peer<'a>], _hist: &History) -> &'a Peer<'a> {
     &peers[0]
 }
 
@@ -64,5 +64,5 @@ fn stranger(_me: &Peer, _other: &Peer, _hist: &History) -> Interaction {
 fn main() {
     let mut requests: Vec<Vec<&Peer>> = vec![];
     // Integer in arr![;_] should match the number PEERS
-    let mut peers = vec![];
+    let mut peers: Vec<Peer> = vec![];
 }
